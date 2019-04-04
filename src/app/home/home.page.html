@@ -1,14 +1,47 @@
 <ion-header>
-  <ion-toolbar>
+  <ion-toolbar color='primary'>
     <ion-title>
-      Ionic Blank
+      Home
     </ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
-  <div class="ion-padding">
-    The world is your oyster.
-    <p>If you get lost, the <a target="_blank" rel="noopener" href="https://ionicframework.com/docs/">docs</a> will be your guide.</p>
+<ion-content padding class="bg-secondary">
+  <div class="col-grid">
+    <div class="col-item" [routerLink]="['/student']" *ngIf='userService.isTeacher$|async'>
+      <!-- <ion-icon name="infinite" color='secondary'></ion-icon> -->
+      <img src="/assets/add-students.jpg" alt="">
+      <div class="col-label">
+        Students
+      </div>
+    </div>
+    <div class="col-item" *ngIf='userService.isTeacher$|async'>
+      <!-- <ion-icon name="infinite" color='secondary'></ion-icon> -->
+      <img src="/assets/attendance.png" alt="">
+      <div class="col-label">
+        Add Attendence
+      </div>
+    </div>
+    <div class="col-item"  *ngIf='userService.isTeacher$|async'>
+      <!-- <ion-icon name="infinite" color='secondary'></ion-icon> -->
+      <img src="/assets/rules.png" alt="">
+      <div class="col-label">
+        Add Rules
+      </div>
+    </div>
+    <div class="col-item">
+      <!-- <ion-icon name="infinite" color='secondary'></ion-icon> -->
+      <img src="/assets/location.png" alt="">
+      <div class="col-label">
+        Monitor 
+      </div>
+    </div>
+    <!---->
+    <div class="col-item" (click)="onLogOut()">
+      <ion-icon name="log-out" color='danger'></ion-icon>
+      <div class="col-label">
+        Log Out
+      </div>
+    </div>
   </div>
 </ion-content>

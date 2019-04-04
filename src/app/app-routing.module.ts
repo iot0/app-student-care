@@ -3,11 +3,12 @@ import { PreloadAllModules, RouterModule, Routes } from "@angular/router";
 import { AuthGuard } from "./shared/guards/auth.guard";
 
 const routes: Routes = [
-  { path: "", redirectTo: "home", pathMatch: "full" },
+  { path: "", redirectTo: "welcome", pathMatch: "full" },
   { path: "home", loadChildren: "./home/home.module#HomePageModule", canActivate: [AuthGuard], canLoad: [AuthGuard] },
   { path: "login", loadChildren: "./login/login.module#LoginPageModule", canActivate: [AuthGuard], canLoad: [AuthGuard] },
   { path: "register", loadChildren: "./register/register.module#RegisterPageModule" },
-  { path: "welcome", loadChildren: "./welcome/welcome.module#WelcomePageModule" }
+  { path: "welcome", loadChildren: "./welcome/welcome.module#WelcomePageModule" },
+  { path: 'student', loadChildren: './student/student.module#StudentPageModule' }
 ];
 
 @NgModule({

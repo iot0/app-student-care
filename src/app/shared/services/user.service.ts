@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 import { BehaviorSubject, Observable } from "rxjs";
 import { User, UserRole } from "../models/user";
-import { map } from "rxjs/operators";
+import { map, tap, first } from "rxjs/operators";
 import { AngularFirestoreCollection } from "@angular/fire/firestore";
 import { Router } from "@angular/router";
 import { FirestoreService } from "./firestore.service";
@@ -17,63 +17,60 @@ export class UserService {
 
   currentUser$: Observable<User> = this.userSubject.asObservable();
 
-  isLoggedIn$: Observable<boolean> = this.userSubject
-    .asObservable()
-    .pipe(map(x => !!x));
+  isLoggedIn$: Observable<boolean> = this.userSubject.asObservable().pipe(map(x => !!x));
 
-  isCareTaker$: Observable<boolean> = this.currentUser$.pipe(
+  isTeacher$: Observable<boolean> = this.currentUser$.pipe(
     map(x => {
-      return x ? x.Role == UserRole.CareTaker : false;
+      return x ? x.Role == UserRole.Teacher : false;
     })
   );
 
-  isPatient$: Observable<boolean> = this.userSubject.asObservable().pipe(
+  isParent$: Observable<boolean> = this.userSubject.asObservable().pipe(
     map(x => {
-      return x ? x.Role == UserRole.Patient : false;
+      return x ? x.Role == UserRole.Parent : false;
     })
   );
 
   userCollection: AngularFirestoreCollection<User>;
-  constructor(
-    private router: Router,
-    private firestoreService: FirestoreService,
-    public afAuth: AngularFireAuth
-  ) {
+  constructor(private router: Router, private firestoreService: FirestoreService, public afAuth: AngularFireAuth) {
     const user = window.localStorage[this.localKey];
     if (user) {
       this.userSubject.next(JSON.parse(user));
     }
   }
 
-  isAuthenticated():boolean{
-    if(this.userSubject.value) return true;
+  isAuthenticated(): boolean {
+    if (this.userSubject.value) return true;
     return false;
   }
 
+  currentUserObj(): User {
+    return this.userSubject.value;
+  }
+
   async register(user: User) {
-    const res = await this.afAuth.auth.createUserWithEmailAndPassword(
-      user.EmailId,
-      user.Password
-    );
+    const res = await this.afAuth.auth.createUserWithEmailAndPassword(user.EmailId, user.Password);
     user.Uid = res.user.uid;
     this.firestoreService.set(`${this.collectionName}/${res.user.uid}`, user);
     return user;
   }
 
   async login(user: User) {
-    const res = await this.afAuth.auth.signInWithEmailAndPassword(
-      user.EmailId,
-      user.Password
-    );
+    const res = await this.afAuth.auth.signInWithEmailAndPassword(user.EmailId, user.Password);
     user.Uid = res.user.uid;
 
     // get user details
-    return this.firestoreService.doc$<User>(`${this.collectionName}/${user.Uid}`)
-    .pipe(map((user)=>{
-      window.localStorage[this.localKey] = JSON.stringify(user);
-      this.userSubject.next(user);
-      return user;
-    })).toPromise();
+
+    return await this.firestoreService
+      .doc$<User>(`${this.collectionName}/${user.Uid}`)
+      .pipe(
+        tap(user => {
+          window.localStorage[this.localKey] = JSON.stringify(user);
+          this.userSubject.next(user);
+        }),
+        first()
+      )
+      .toPromise();
   }
 
   async logOut() {
@@ -84,15 +81,10 @@ export class UserService {
     });
   }
 
-  getById(docId: string): any {
-    return this.firestoreService.docWithId$(
-      `${this.collectionName}/${docId}`
-    );
+  getById(docId: string) {
+    return this.firestoreService.docWithId$(`${this.collectionName}/${docId}`);
   }
   updateDoc(updatedUser, docId): any {
-    this.firestoreService.update(
-      `${this.collectionName}/${docId}`,
-      updatedUser
-    );
+    return this.firestoreService.update(`${this.collectionName}/${docId}`, updatedUser);
   }
 }

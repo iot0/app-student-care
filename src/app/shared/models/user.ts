@@ -8,7 +8,7 @@ export class User {
     Password?:string;
   }
   export enum UserRole{
-      CareTaker=1,
-      Patient,
+      Teacher=1,
+      Parent,
   }
   
