@@ -1,45 +1,90 @@
 <ion-header>
-  <ion-toolbar color='primary'>
-    <ion-title>Students</ion-title>
+  <ion-toolbar color="primary">
+    <ion-title>Student</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
-  <ng-container *ngIf="(data$ | async) as res">
-    <ng-container *ngIf="res.data; else notificationTemplate">
-      <div class="position-relative">
-        <ion-list lines="inset">
-          <ion-item *ngFor="let student of res.data">
-            <ion-label text-wrap>
-              <ion-text color="primary">
-                <h3>{{ student.Name }}</h3>
-              </ion-text>
-              <p>Class : {{ student.Class }}</p>
-            </ion-label>
-          </ion-item>
-        </ion-list>
-      </div>
-    </ng-container>
-    <ng-template #notificationTemplate>
-      <ng-container *ngIf="res.error || res.empty; else loadingTemplate">
-        <div class="item-center" [hidden]="!res.error">
-          Something went wrong , Try again later .
-        </div>
-        <div class="item-center" [hidden]="!res.empty">
-          List is empty.
-        </div>
-      </ng-container>
-      <ng-template #loadingTemplate>
-        <div class="item-center">
-          <ion-spinner name="lines"></ion-spinner>
-        </div>
-      </ng-template>
-    </ng-template>
+<ion-content padding>
+  <!-- New form section-->
+  <ng-container *ngIf="mode === 'new'; else existingTemplate">
+    <app-student-form (success)="afterRegistration($event)"></app-student-form>
   </ng-container>
 
-  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
-    <ion-fab-button (click)="onStudentCreate()">
-      <ion-icon name="add"></ion-icon>
-    </ion-fab-button>
-  </ion-fab>
+  <!--Existing section .-->
+  <ng-template #existingTemplate>
+    <ng-container *ngIf="(data$ | async) as res">
+      <ng-container *ngIf="res.data; else notificationTemplate">
+        <div class="position-relative">
+          <app-student-card [data]="res.data"></app-student-card>
+
+          <!--Family divider section-->
+          <ion-item-divider>
+            <ion-label>
+              <ion-text color="primary">
+                <h2>Family</h2>
+              </ion-text>
+            </ion-label>
+            <ion-fab-button slot="end" color="secondary" (click)="addFamily()" *ngIf="(userService.isSchool$ | async)">
+              <ion-icon name="person-add"></ion-icon>
+            </ion-fab-button>
+          </ion-item-divider>
+
+          <!--Family view section-->
+          <ng-container *ngIf="(family$ | async) as familyRes">
+            <ng-container *ngIf="familyRes.data; else familyDataNotificationTemplate">
+              <app-family-card [data]="familyRes.data"></app-family-card>
+            </ng-container>
+            <!--Notification on family error section-->
+            <ng-template #familyDataNotificationTemplate>
+              <ng-container *ngIf="familyRes.error || familyRes.empty; else loadingTemplate">
+                <div class="item-center" [hidden]="!familyRes.error">
+                  Something went wrong , Try again later .
+                </div>
+                <div class="item-center" [hidden]="!familyRes.empty">
+                  No family details added .
+                </div>
+              </ng-container>
+            </ng-template>
+          </ng-container>
+        </div>
+      </ng-container>
+
+      <ng-template #notificationTemplate>
+        <ng-container *ngIf="res.error || res.empty; else loadingTemplate">
+          <div class="item-center" [hidden]="!res.error">
+            Something went wrong , Try again later .
+          </div>
+          <div class="item-center" [hidden]="!res.empty">
+            List is empty.
+          </div>
+        </ng-container>
+      </ng-template>
+    </ng-container>
+  </ng-template>
 </ion-content>
+<ng-template #loadingTemplate>
+  <div class="item-center">
+    <ion-spinner name="lines"></ion-spinner>
+  </div>
+</ng-template>
+
+<ion-footer *ngIf="(userService.isTeacher$ | async) || (userService.isParent$ | async)">
+  <ion-toolbar [color]="isTrackingOn ? 'success' : 'warning'" *ngIf="mode === 'existing'">
+    <ion-title>
+      <ng-container *ngIf="!isTrackingOn; else watchingTitleTemplate">
+        Turn On Monitoring
+      </ng-container>
+      <ng-template #watchingTitleTemplate>
+        Turn Off Monitoring
+      </ng-template>
+    </ion-title>
+    <ion-buttons slot="end">
+      <ion-button color="secondary" (click)="addToWatch()" *ngIf="!isTrackingOn">
+        <ion-icon slot="icon-only" name="arrow-forward"></ion-icon>
+      </ion-button>
+      <ion-button color="danger" (click)="removeFromWatch()" *ngIf="isTrackingOn">
+        <ion-icon slot="icon-only" name="remove-circle"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-footer>

@@ -42,14 +42,14 @@ export class RegisterPage implements OnInit {
           EmailId: email,
           Password: password,
           FullName: fullName,
-          Role: UserRole.Teacher
+          Role: UserRole.School
         };
         // 4. finally call firebase registration method
         const res = await this.userService.register(user);
         console.log(res);
         await this.themeService.alert(
           "Success",
-          "User registration Successful , Now you can login with your registered email and password ."
+          "School registration successful , Now you can login with your registered email and password ."
         );
         this.router.navigate(["login"]);
       } catch (err) {

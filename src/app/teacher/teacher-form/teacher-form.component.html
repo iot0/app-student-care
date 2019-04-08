@@ -1,0 +1,55 @@
+<ion-list>
+  <form [formGroup]="createForm" novalidate autocomplete="off">
+    <ion-item-divider>
+      <ion-label>
+        <ion-text color="primary">
+          <h2>FULL NAME</h2>
+        </ion-text>
+      </ion-label>
+    </ion-item-divider>
+    <ion-item>
+      <ion-input formControlName="fullName" type="text" placeholder="John Stone"></ion-input>
+    </ion-item>
+    <ion-item-divider>
+      <ion-label>
+        <ion-text color="primary">
+          <h2>DATE OF BIRTH</h2>
+        </ion-text>
+      </ion-label>
+    </ion-item-divider>
+    <ion-item>
+      <ion-datetime formControlName="dob" display-format="MMM DD, YYYY" placeholder="Select Date of Birth"></ion-datetime>
+    </ion-item>
+    <ion-item-divider>
+      <ion-label>
+        <ion-text color="primary">
+          <h2>EMAIL ID</h2>
+        </ion-text>
+      </ion-label>
+    </ion-item-divider>
+    <ion-item>
+      <ion-input formControlName="emailId" type="text" placeholder="john@gmail.com"></ion-input>
+    </ion-item>
+    <ion-item-divider>
+      <ion-label>
+        <ion-text color="primary">
+          <h2>PHONE NUMBER</h2>
+        </ion-text>
+      </ion-label>
+    </ion-item-divider>
+    <ion-item>
+      <ion-input formControlName="phoneNumber" type="text" placeholder="9989899899"></ion-input>
+    </ion-item>
+    <ion-item-divider>
+      <ion-label>
+        <ion-text color="primary">
+          <h2>ADDRESS</h2>
+        </ion-text>
+      </ion-label>
+    </ion-item-divider>
+    <ion-item>
+      <ion-textarea formControlName="address" type="text" placeholder="Ulloor , Trivandrum"></ion-textarea>
+    </ion-item>
+    <ion-button expand="full" (click)="onSubmit()">Submit</ion-button>
+  </form>
+</ion-list>

@@ -42,7 +42,19 @@ $custom: (
   medium: #B682A5,
   dark: #34162A
 ); 
-$kh-theme:map-merge($default,$custom);
+
+$custom1: (
+  primary: #cf1f31,
+  secondary: #58595b,
+  tertiary: #FF5E79,
+  light: #F4EDF2,
+  medium: #B682A5,
+  dark: #34162A
+); 
+
+$selectedTheme:$custom1;
+
+$kh-theme:map-merge($default,$selectedTheme);
 
 @function kh-theme($key) {
   @return map-get($kh-theme, $key);

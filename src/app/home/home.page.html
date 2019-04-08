@@ -1,47 +1,55 @@
 <ion-header>
   <ion-toolbar color='primary'>
-    <ion-title>
-      Home
-    </ion-title>
+      <ion-title>
+          <ng-container *ngIf="(userService.isSchool$ | async)">School </ng-container>
+          <ng-container *ngIf="(userService.isTeacher$ | async)">Teacher </ng-container>
+          <ng-container *ngIf="(userService.isStudent$ | async)">Student </ng-container>
+          <ng-container *ngIf="(userService.isParent$ | async)">Parent </ng-container>
+          Dashboard
+        </ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content padding class="bg-secondary">
   <div class="col-grid">
-    <div class="col-item" [routerLink]="['/student']" *ngIf='userService.isTeacher$|async'>
+    <ion-card class="col-item" [routerLink]="['/teachers']" *ngIf='userService.isSchool$|async'>
+      <!-- <ion-icon name="infinite" color='secondary'></ion-icon> -->
+      <img src="/assets/teacher.png" alt="">
+      <div class="col-label">
+        Teachers
+      </div>
+    </ion-card>
+    <ion-card class="col-item" [routerLink]="['/students']" *ngIf='(userService.isSchool$|async)||(userService.isTeacher$|async)'>
       <!-- <ion-icon name="infinite" color='secondary'></ion-icon> -->
       <img src="/assets/add-students.jpg" alt="">
       <div class="col-label">
         Students
       </div>
-    </div>
-    <div class="col-item" *ngIf='userService.isTeacher$|async'>
+    </ion-card>
+    <ion-card class="col-item" [routerLink]="['/student',user?.Student?.Uid]" *ngIf='userService.isParent$|async'>
+      <!-- <ion-icon name="infinite" color='secondary'></ion-icon> -->
+      <img src="/assets/student.png" alt="">
+      <div class="col-label">
+        Child
+      </div>
+    </ion-card>
+    <ion-card class="col-item" *ngIf='userService.isTeacher$|async'  [routerLink]="['/attendance']">
       <!-- <ion-icon name="infinite" color='secondary'></ion-icon> -->
       <img src="/assets/attendance.png" alt="">
       <div class="col-label">
-        Add Attendence
+        Attendence
       </div>
-    </div>
-    <div class="col-item"  *ngIf='userService.isTeacher$|async'>
-      <!-- <ion-icon name="infinite" color='secondary'></ion-icon> -->
-      <img src="/assets/rules.png" alt="">
-      <div class="col-label">
-        Add Rules
-      </div>
-    </div>
-    <div class="col-item">
-      <!-- <ion-icon name="infinite" color='secondary'></ion-icon> -->
-      <img src="/assets/location.png" alt="">
-      <div class="col-label">
-        Monitor 
-      </div>
-    </div>
+    </ion-card>
     <!---->
-    <div class="col-item" (click)="onLogOut()">
+    <ion-card class="col-item" (click)="onLogOut()">
       <ion-icon name="log-out" color='danger'></ion-icon>
       <div class="col-label">
         Log Out
       </div>
-    </div>
+    </ion-card>
   </div>
 </ion-content>
+
+<app-drawer [options]="drawerOptions" *ngIf='(userService.isLoggedIn$|async)&&((userService.isParent$|async)||(userService.isTeacher$|async))' #drawer>
+  <app-device-connect [drawer]='drawer'></app-device-connect>
+</app-drawer>

@@ -19,6 +19,12 @@ export class UserService {
 
   isLoggedIn$: Observable<boolean> = this.userSubject.asObservable().pipe(map(x => !!x));
 
+  isSchool$: Observable<boolean> = this.currentUser$.pipe(
+    map(x => {
+      return x ? x.Role == UserRole.School : false;
+    })
+  );
+
   isTeacher$: Observable<boolean> = this.currentUser$.pipe(
     map(x => {
       return x ? x.Role == UserRole.Teacher : false;
@@ -54,23 +60,37 @@ export class UserService {
     this.firestoreService.set(`${this.collectionName}/${res.user.uid}`, user);
     return user;
   }
-
   async login(user: User) {
     const res = await this.afAuth.auth.signInWithEmailAndPassword(user.EmailId, user.Password);
     user.Uid = res.user.uid;
 
     // get user details
 
+    let userDoc = await this.getUserDetailsAsAsync(user.Uid);
+
+    window.localStorage[this.localKey] = JSON.stringify(userDoc);
+    this.userSubject.next(userDoc);
+
+    return userDoc;
+  }
+
+  getFamilies(studentId: string): Observable<any> {
+    return this.firestoreService.colWithIds$<User>(this.collectionName, ref => {
+      return ref
+        .where("Role", "==", UserRole.Parent)
+        .where("Student.Uid", "==", studentId)
+        .limit(20);
+    });
+  }
+
+  async getUserDetailsAsAsync(uid: string) {
     return await this.firestoreService
-      .doc$<User>(`${this.collectionName}/${user.Uid}`)
-      .pipe(
-        tap(user => {
-          window.localStorage[this.localKey] = JSON.stringify(user);
-          this.userSubject.next(user);
-        }),
-        first()
-      )
+      .doc$<User>(`${this.collectionName}/${uid}`)
+      .pipe(first())
       .toPromise();
+  }
+  getUserDetails(docId: string) {
+    return this.firestoreService.docWithId$(`${this.collectionName}/${docId}`);
   }
 
   async logOut() {
@@ -86,5 +106,62 @@ export class UserService {
   }
   updateDoc(updatedUser, docId): any {
     return this.firestoreService.update(`${this.collectionName}/${docId}`, updatedUser);
+  }
+  getTeachers(schoolId: string): Observable<any> {
+    return this.firestoreService.colWithIds$<User>(this.collectionName, ref => {
+      return ref
+        .where("Role", "==", UserRole.Teacher)
+        .where("SchoolId", "==", schoolId)
+        .limit(20);
+    });
+  }
+
+  getStudents(schoolId: string): Observable<any> {
+    return this.firestoreService.colWithIds$<User>(this.collectionName, ref => {
+      return ref
+        .where("Role", "==", UserRole.Student)
+        .where("SchoolId", "==", schoolId)
+        .limit(20);
+    });
+  }
+
+  getTeacherStudents(teacherId: string): Observable<any> {
+    return this.firestoreService.colWithIds$<User>(this.collectionName, ref => {
+      return ref
+        .where("Role", "==", UserRole.Student)
+        .where("Teacher.Uid", "==", teacherId)
+        .limit(20);
+    });
+  }
+
+  getTeacherWatchingDevices(teacherId:string){
+    return this.firestoreService.colWithIds$<User>(this.collectionName, ref => {
+      return ref
+        .where("Role", "==", UserRole.Student)
+        .where("IsTeacherWatching", "==", true)
+        .where("Teacher.Uid", "==", teacherId)
+        .limit(20);
+    });
+  }
+  getParentWatchingDevices(studentId:string){
+    return this.firestoreService.colWithIds$<User>(this.collectionName, ref => {
+      return ref
+        .where("Role", "==", UserRole.Student)
+        .where("IsParentWatching", "==", true)
+        .where("Uid", "==", studentId)
+        .limit(1);
+    });
+  }
+  async watchStudentByTeacher(studentId: string,ip:string) {
+    return this.firestoreService.update<User>(`${this.collectionName}/${studentId}`, { IsTeacherWatching: true ,DeviceIp:ip});
+  }
+  async unWatchStudentTeacher(studentId: string) {
+    return this.firestoreService.update(`${this.collectionName}/${studentId}`, { IsTeacherWatching: false });
+  }
+  async watchStudentByParent(studentId: string,ip:string) {
+    return this.firestoreService.update<User>(`${this.collectionName}/${studentId}`, { IsParentWatching: true ,DeviceIp:ip});
+  }
+  async unWatchStudentParent(studentId: string) {
+    return this.firestoreService.update(`${this.collectionName}/${studentId}`, { IsParentWatching: false });
   }
 }

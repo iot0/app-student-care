@@ -1,0 +1,78 @@
+<ion-list>
+  <form [formGroup]="createForm" novalidate>
+    <ion-item-divider>
+      <ion-label>
+        <ion-text color="primary">
+          <h2>NAME</h2>
+        </ion-text>
+      </ion-label>
+    </ion-item-divider>
+    <ion-item>
+      <ion-input formControlName="name" type="text" placeholder="Tintumon"></ion-input>
+    </ion-item>
+    <ion-item-divider>
+      <ion-label>
+        <ion-text color="primary">
+          <h2>CLASS</h2>
+        </ion-text>
+      </ion-label>
+    </ion-item-divider>
+    <ion-item>
+      <ion-input formControlName="class" type="text" placeholder="Vth A"></ion-input>
+    </ion-item>
+    <ion-item-divider>
+      <ion-label>
+        <ion-text color="primary">
+          <h2>EMAIL ID</h2>
+        </ion-text>
+      </ion-label>
+    </ion-item-divider>
+    <ion-item>
+        <ion-input formControlName="emailId" type="text" placeholder="john@gmail.com"></ion-input>
+      </ion-item>
+    <ion-item-divider>
+      <ion-label>
+        <ion-text color="primary">
+          <h2>DATE OF BIRTH</h2>
+        </ion-text>
+      </ion-label>
+    </ion-item-divider>
+    <ion-item>
+      <ion-datetime formControlName="dob" display-format="MMM DD, YYYY" placeholder="Select Date of Birth"></ion-datetime>
+    </ion-item>
+    <ion-item-divider>
+      <ion-label>
+        <ion-text color="primary">
+          <h2>PHONE NUMBER</h2>
+        </ion-text>
+      </ion-label>
+    </ion-item-divider>
+    <ion-item>
+      <ion-input formControlName="phoneNumber" type="text" placeholder="9989899899"></ion-input>
+    </ion-item>
+
+    <ion-item-divider>
+      <ion-label>
+        <ion-text color="primary">
+          <h2>ADDRESS</h2>
+        </ion-text>
+      </ion-label>
+    </ion-item-divider>
+    <ion-item>
+      <ion-textarea formControlName="address" type="text" placeholder="Ulloor , Trivandrum"></ion-textarea>
+    </ion-item>
+    <ion-item-divider>
+      <ion-label>
+        <ion-text color="primary">
+          <h2>TEACHER</h2>
+        </ion-text>
+        <p>{{ createForm.get("teacher")?.value?.FullName }}</p>
+      </ion-label>
+      <ion-fab-button slot="end" color="secondary" (click)="openTeacherSelectModal()">
+        <ion-icon name="search"></ion-icon>
+      </ion-fab-button>
+    </ion-item-divider>
+    <ion-input formControlName="teacher" type="hidden"></ion-input>
+    <ion-button expand="full" (click)="onSubmit()">Submit</ion-button>
+  </form>
+</ion-list>

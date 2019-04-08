@@ -6,7 +6,11 @@ import { Routes, RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 
 import { StudentPage } from './student.page';
-import { StudentCreateModalComponent } from './student-create-modal/student-create-modal.component';
+import { StudentCardComponent } from './student-card/student-card.component';
+import { StudentFormComponent } from './student-form/student-form.component';
+import { SharedModule } from '../shared/shared.module';
+import { FamilyCardComponent } from './family-card/family-card.component';
+import { FamilyFormComponent } from './family-form/family-form.component';
 
 const routes: Routes = [
   {
@@ -21,9 +25,10 @@ const routes: Routes = [
     FormsModule,
     IonicModule,
     RouterModule.forChild(routes),
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    SharedModule
   ],
-  declarations: [StudentPage,StudentCreateModalComponent],
-  entryComponents:[StudentCreateModalComponent]
+  declarations: [StudentPage,StudentCardComponent,StudentFormComponent,FamilyCardComponent,FamilyFormComponent],
+  entryComponents:[FamilyFormComponent]
 })
 export class StudentPageModule {}
