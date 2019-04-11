@@ -5,6 +5,9 @@ import { catchError, takeWhile, map, first } from "rxjs/operators";
 import { User } from "../shared/models/user";
 import { AttendanceService } from "../shared/services/attendance.service";
 import { Attendance } from "../shared/models/attendance";
+import { getDateString } from "../shared/helper";
+import { FormGroup, Validators, FormBuilder } from "@angular/forms";
+import { ThemeService } from "../shared/services/theme.service";
 
 @Component({
   selector: "app-attendance",
@@ -15,14 +18,33 @@ export class AttendancePage implements OnInit {
   data$: BehaviorSubject<any> = new BehaviorSubject({ loading: true });
   isAlive: boolean = true;
   attendanceList: any;
-  date: Date = new Date();
-  constructor(public userService: UserService, public attendanceService: AttendanceService) {}
+  form: FormGroup;
+  constructor(
+    public userService: UserService,
+    private fb: FormBuilder,
+    public attendanceService: AttendanceService,
+    public themeService: ThemeService
+  ) {
+    this.initForm();
+  }
+
+  initForm() {
+    let todaysDate = new Date();
+    this.form = this.fb.group({
+      date: [todaysDate.toDateString(), Validators.required]
+    });
+  }
 
   async ngOnInit() {
+    await this.initDatas();
+  }
+
+  async initDatas(){
     let user = this.userService.currentUserObj();
 
     await this.loadDetails();
-    this.attendanceList = await this.attendanceService.get(this.date, user.Uid);
+    let dateString = getDateString(new Date());
+    this.attendanceList = await this.attendanceService.get(dateString, user.Uid);
     console.log(this.attendanceList);
   }
 
@@ -32,17 +54,22 @@ export class AttendancePage implements OnInit {
   checkAttendance(student: User) {}
 
   async markAttendance(student: User) {
-    let user = this.userService.currentUserObj();
-    console.log(student);
-    let attendance: Attendance = {
-      Class: student.Class,
-      Date: this.date,
-      Student: { Uid: student.Uid, FullName: student.FullName },
-      Teacher: { Uid: user.Uid, FullName: user.FullName }
-    };
-    await this.attendanceService.markAttendance(attendance);
+    debugger;
+    if (this.form.valid) {
+      let user = this.userService.currentUserObj();
+      //console.log(student);
+      let attendance: Attendance = {
+        Class: student.Class,
+        Date: getDateString(this.form.get("date").value),
+        Student: { Uid: student.Uid, FullName: student.FullName },
+        Teacher: { Uid: user.Uid, FullName: user.FullName }
+      };
+      await this.attendanceService.markAttendance(attendance);
+    } else {
+      this.themeService.alert("Error", "Invalid date");
+    }
   }
-  
+
   async loadDetails() {
     let user = this.userService.currentUserObj();
     console.log(user);

@@ -21,7 +21,7 @@ import { LocationModalComponent } from './components/location/location-modal.com
     RouterModule,
     ReactiveFormsModule
   ],
-  exports:[DrawerComponent,DeviceConnectComponent,LocationModule,RibbonDirective,SyncDeviceComponent,SelectTeacherComponent,BoundaryComponent],
+  exports:[DrawerComponent,DeviceConnectComponent,LocationModule,RibbonDirective,SyncDeviceComponent,SelectTeacherComponent,BoundaryComponent,ReactiveFormsModule],
   entryComponents:[SelectTeacherComponent,SyncDeviceComponent,BoundaryComponent,LocationModalComponent]
 })
 export class SharedModule { }

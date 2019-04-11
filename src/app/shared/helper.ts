@@ -3,6 +3,10 @@ export function generatePassword(date, email) {
     const dob = new Date(date);
     return `${dob.getFullYear()}-${dob.getMonth() + 1}-${dob.getDate()}-${username}`;
   }
+
+export function getDateString(date) {
+    return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
+  }
   
   export function convertToBoolProperty(val: any): boolean {
       if (typeof val === 'string') {

@@ -1,5 +1,7 @@
 {
   "name": "app-student-care",
-  "integrations": {},
+  "integrations": {
+    "cordova": {}
+  },
   "type": "angular"
 }

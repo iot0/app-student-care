@@ -6,7 +6,9 @@ import { DeviceService } from "../../services/device.service";
 import { UserService } from "../../services/user.service";
 import { ModalController } from "@ionic/angular";
 import { BoundaryComponent } from "../boundary/boundary.component";
-import { UserRole } from "../../models/user";
+import { UserRole, User } from "../../models/user";
+import { LocationService } from "../location/location.service";
+import { ThemeService } from "../../services/theme.service";
 
 @Component({
   selector: "app-device-connect",
@@ -25,7 +27,13 @@ export class DeviceConnectComponent implements OnInit, OnDestroy {
   isAlive: boolean = true;
   boundaryCheck$: BehaviorSubject<any> = new BehaviorSubject(null);
 
-  constructor(private deviceService: DeviceService, private userService: UserService, private modalCtrl: ModalController) {}
+  constructor(
+    private deviceService: DeviceService,
+    private mapService: LocationService,
+    private themeService: ThemeService,
+    private userService: UserService,
+    private modalCtrl: ModalController
+  ) {}
 
   ngOnInit() {
     if (this.drawer) {
@@ -120,7 +128,18 @@ export class DeviceConnectComponent implements OnInit, OnDestroy {
     }
     return "Nothing to display .";
   }
-
+  onTracking(device: any) {
+    console.log(device);
+    if (device.Result && device.Result.lattitude && device.Result.longitude) {
+      let latLng = {
+        lat: +device.Result.lattitude,
+        lng: +device.Result.longitude
+      };
+      this.mapService.openModal({ enableSelection: false, marker: latLng });
+    } else {
+      this.themeService.alert("Missing Location Info", "Please check if the location is properly configured for the patient.");
+    }
+  }
   // credits to user:69083 for this specific function
   arePointsNear(checkPoint, centerPoint, km) {
     var ky = 40000 / 360;
