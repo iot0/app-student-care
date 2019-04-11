@@ -32,13 +32,17 @@
           </ion-item>
           <ion-item>
             <ion-label text-wrap>
-              <!-- <p *ngIf="device.Status == 'success'">Result : {{ device.Result | json }}</p> -->
+              <p *ngIf="device.Status == 'success'">Raw Result : {{ device.Result | json }}</p>
               <p>{{ checkBoundary(device) }}</p>
               <ng-container *ngIf="device.Boundary && device.Result && device.Status === 'success'">
                 <p *ngIf="device.isOk">Child in inside the defined boundary</p>
                 <p *ngIf="!device.isOk">Child in outside the defined boundary</p>
               </ng-container>
             </ion-label>
+
+            <ion-fab-button *ngIf="device.Result && device.Status === 'success'" slot="end" color="secondary" (click)="onTracking(device)" appLocation disableOnClickTrigger="true">
+              <ion-icon name="compass"></ion-icon>
+            </ion-fab-button>
           </ion-item>
           <ion-item [routerLink]="['/student/', device.Uid]" detail>
             <ion-avatar slot="start">
