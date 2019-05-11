@@ -70,7 +70,10 @@ export class TeacherFormComponent implements OnInit {
           this.onSuccess.emit(res);
         })
         .catch(err => {
-          this.themeService.alert("Error", "Sorry something went wrong .");
+          if(err && err.message==="EMAIL_EXISTS"){
+            this.themeService.alert("Invalid Email", "Mail already exists .");
+          }
+          else this.themeService.alert("Error", "Sorry something went wrong .");
         })
         .finally(() => {
           this.themeService.progress(false);

@@ -9,6 +9,7 @@ import { BoundaryComponent } from "../boundary/boundary.component";
 import { UserRole, User } from "../../models/user";
 import { LocationService } from "../location/location.service";
 import { ThemeService } from "../../services/theme.service";
+import { DeviceAlertComponent } from "../device-alert/device-alert.component";
 
 @Component({
   selector: "app-device-connect",
@@ -110,42 +111,11 @@ export class DeviceConnectComponent implements OnInit, OnDestroy {
         console.log(res);
       });
   }
-
-  checkBoundary(device: any) {
-    if (device.Result && device.Status === "success") {
-      if (device.Boundary) {
-        if (device.Result.lattitude && device.Result.longitude) {
-          device.isOk = this.arePointsNear(
-            { lat: +device.Result.lattitude, lng: +device.Result.longitude },
-            JSON.parse(device.Boundary.latLng),
-            device.Boundary.radius / 1000
-          );
-          return "Boundary checked";
-        }
-      } else {
-        return JSON.stringify(device.Result);
-      }
-    }
-    return "Nothing to display .";
-  }
-  onTracking(device: any) {
-    console.log(device);
-    if (device.Result && device.Result.lattitude && device.Result.longitude) {
-      let latLng = {
-        lat: +device.Result.lattitude,
-        lng: +device.Result.longitude
-      };
-      this.mapService.openModal({ enableSelection: false, marker: latLng });
-    } else {
-      this.themeService.alert("Missing Location Info", "Please check if the location is properly configured for the patient.");
-    }
-  }
-  // credits to user:69083 for this specific function
-  arePointsNear(checkPoint, centerPoint, km) {
-    var ky = 40000 / 360;
-    var kx = Math.cos((Math.PI * centerPoint.lat) / 180.0) * ky;
-    var dx = Math.abs(centerPoint.lng - checkPoint.lng) * kx;
-    var dy = Math.abs(centerPoint.lat - checkPoint.lat) * ky;
-    return Math.sqrt(dx * dx + dy * dy) <= km;
+  async sendDeviceAlert(device: User) {
+    const modal = await this.modalCtrl.create({
+      component: DeviceAlertComponent,
+      componentProps: { deviceIp: device.DeviceIp }
+    });
+    return await modal.present();
   }
 }

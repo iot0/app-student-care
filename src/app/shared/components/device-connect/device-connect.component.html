@@ -31,18 +31,7 @@
             </ion-label>
           </ion-item>
           <ion-item>
-            <ion-label text-wrap>
-              <p *ngIf="device.Status == 'success'">Raw Result : {{ device.Result | json }}</p>
-              <p>{{ checkBoundary(device) }}</p>
-              <ng-container *ngIf="device.Boundary && device.Result && device.Status === 'success'">
-                <p *ngIf="device.isOk">Child in inside the defined boundary</p>
-                <p *ngIf="!device.isOk">Child in outside the defined boundary</p>
-              </ng-container>
-            </ion-label>
-
-            <ion-fab-button *ngIf="device.Result && device.Status === 'success'" slot="end" color="secondary" (click)="onTracking(device)" appLocation disableOnClickTrigger="true">
-              <ion-icon name="compass"></ion-icon>
-            </ion-fab-button>
+            <app-device-notification [data]='device' *ngIf='device.Status=="success"' ></app-device-notification>
           </ion-item>
           <ion-item [routerLink]="['/student/', device.Uid]" detail>
             <ion-avatar slot="start">
@@ -53,10 +42,14 @@
             </ion-label>
           </ion-item>
           <ion-fab vertical="bottom" horizontal="end">
-            <ion-fab-button>
+            <ion-fab-button color='light'>
               <ion-icon name="more"></ion-icon>
             </ion-fab-button>
             <ion-fab-list side="start">
+              <ion-fab-button (click)="sendDeviceAlert(device)" color="warning">
+                <ion-icon name="mail"></ion-icon>
+              </ion-fab-button>
+
               <ion-fab-button (click)="setBoundary(device)" color="danger">
                 <ion-icon name="alert"></ion-icon>
               </ion-fab-button>
@@ -75,7 +68,7 @@
           Something went wrong , Try again later .
         </div>
         <div class="item-center" [hidden]="!res.empty">
-          List is empty.
+          Nothing to display
         </div>
       </ng-container>
       <ng-template #loadingTemplate>

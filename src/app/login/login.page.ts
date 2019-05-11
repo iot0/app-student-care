@@ -41,6 +41,8 @@ export class LoginPage implements OnInit {
         const res = await this.userService.login(user);
         if (res) {
           this.router.navigate(["home"]);
+        }else{
+          await this.themeService.toast("Invalid User");  
         }
       } catch (err) {
         // 5. handle error , showing error message

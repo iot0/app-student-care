@@ -18,7 +18,15 @@ export class AttendanceService {
         .where("Date", "==", date)
         .where("Teacher.Uid", "==", teacherId)
         .limit(20);
-    }).pipe(first()).toPromise();
+    });
+  }
+  getByStudent(studentId:string,date:string){
+    return this.firestoreService.colWithIds$<Attendance>(this.collectionName, ref => {
+      return ref
+        .where("Date", "==", date)
+        .where("Student.Uid", "==", studentId)
+        .limit(1);
+    });
   }
 
   async markAttendance(data:Attendance) {

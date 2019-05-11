@@ -12,7 +12,7 @@ import { catchError, takeWhile } from "rxjs/operators";
 export class TeachersPage implements OnInit, OnDestroy {
   data$: BehaviorSubject<any> = new BehaviorSubject({ loading: true });
   isAlive: boolean = true;
-  constructor(private userService: UserService) {}
+  constructor(public userService: UserService) {}
 
   ngOnInit() {
     let user = this.userService.currentUserObj();

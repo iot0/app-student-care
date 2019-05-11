@@ -1,29 +1,29 @@
 {
   "project_info": {
-    "project_number": "86108963059",
-    "firebase_url": "https://app-student-care.firebaseio.com",
-    "project_id": "app-student-care",
-    "storage_bucket": "app-student-care.appspot.com"
+    "project_number": "533637351693",
+    "firebase_url": "https://student-care-fb29b.firebaseio.com",
+    "project_id": "student-care-fb29b",
+    "storage_bucket": "student-care-fb29b.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:86108963059:android:62675bb65d15e326",
+        "mobilesdk_app_id": "1:533637351693:android:05d8bf19e37c440d",
         "android_client_info": {
-          "package_name": "com.keephacking.student_care"
+          "package_name": "com.abcd.studentcare"
         }
       },
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyCkKpGrjGazjGymIY3Jw3-DPreoyOVgQ_4"
+          "current_key": "AIzaSyASN_ESnUT8GxCUkqwiK01j8v5EEJNjixM"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "86108963059-s3g5n5iq4ln045kl7rpk0nj6b7nnutug.apps.googleusercontent.com",
+              "client_id": "533637351693-8asv8mqkmp9d799pm36a1oct76anrf5e.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
