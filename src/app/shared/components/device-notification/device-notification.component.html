@@ -1,19 +1,20 @@
 <ion-card>
   <ion-card-content>
-    <p>Temparature : {{ data.Result.tempReading }}</p>
+    <p>Temparature : {{ deviceResult.tempReading }}</p>
     <ion-text [color]="(boundary$ | async) === true ? 'success' : 'danger'">
-      <h2>
+      <h2 *ngIf='boundary'>
         <ng-container *ngIf="(boundary$ | async) === true; else outsideBoundaryTemplate">
           Inside Boundary
         </ng-container>
         <ng-template #outsideBoundaryTemplate>
           Outside Boundary
+
         </ng-template>
       </h2>
     </ion-text>
   </ion-card-content>
-  <ion-fab vertical="top" horizontal="end">
-    <ion-fab-button *ngIf="data.Result" color="secondary" (click)="onTracking(data)" appLocation disableOnClickTrigger="true">
+  <ion-fab vertical="bottom" horizontal="end">
+    <ion-fab-button *ngIf="deviceResult" color="secondary" (click)="onTracking()" appLocation disableOnClickTrigger="true">
       <ion-icon name="compass"></ion-icon>
     </ion-fab-button>
   </ion-fab>
