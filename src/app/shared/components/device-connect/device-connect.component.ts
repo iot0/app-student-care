@@ -10,6 +10,7 @@ import { UserRole, User } from "../../models/user";
 import { LocationService } from "../location/location.service";
 import { ThemeService } from "../../services/theme.service";
 import { DeviceAlertComponent } from "../device-alert/device-alert.component";
+import { AudioService } from '../../services/audio.service';
 
 @Component({
   selector: "app-device-connect",
@@ -28,15 +29,12 @@ export class DeviceConnectComponent implements OnInit, OnDestroy {
   isAlive: boolean = true;
   boundaryCheck$: BehaviorSubject<any> = new BehaviorSubject(null);
 
-  constructor(
-    private deviceService: DeviceService,
-    private mapService: LocationService,
-    private themeService: ThemeService,
-    private userService: UserService,
-    private modalCtrl: ModalController
-  ) {}
+  constructor(private deviceService: DeviceService,
+     private userService: UserService, 
+     public audioService: AudioService, 
+     private modalCtrl: ModalController) {}
 
-  ngOnInit() {
+  ngOnInit() {  
     if (this.drawer) {
       this.drawer.onChange.subscribe(change => {
         this.onDrawerStateChange(change);
@@ -64,8 +62,6 @@ export class DeviceConnectComponent implements OnInit, OnDestroy {
           this.data$.next({ data: res });
         } else this.data$.next({ empty: true });
       });
-
-    // this.boundaryCheck$
   }
 
   //TODO: To show arrow accordingly for customer popup
@@ -89,7 +85,9 @@ export class DeviceConnectComponent implements OnInit, OnDestroy {
 
     modal.onWillDismiss().then(res => {
       console.log(res);
-      device.Boundary = res.data;
+      if (res.data) {
+        device.Boundary = res.data;
+      }
     });
     return await modal.present();
   }

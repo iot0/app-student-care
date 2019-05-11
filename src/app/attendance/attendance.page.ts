@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, OnDestroy } from "@angular/core";
 import { BehaviorSubject } from "rxjs";
 import { UserService } from "../shared/services/user.service";
 import { catchError, takeWhile, map, first } from "rxjs/operators";
@@ -14,7 +14,7 @@ import { ThemeService } from "../shared/services/theme.service";
   templateUrl: "./attendance.page.html",
   styleUrls: ["./attendance.page.scss"]
 })
-export class AttendancePage implements OnInit {
+export class AttendancePage implements OnInit,OnDestroy {
   data$: BehaviorSubject<any> = new BehaviorSubject({ loading: true });
   isAlive: boolean = true;
   attendanceList: any;
@@ -45,7 +45,7 @@ export class AttendancePage implements OnInit {
     let dateString = getDateString(this.form.get("date").value);
     if (this.user.Role === UserRole.Teacher) {
       await this.loadDetails();
-      this.themeService.progress(true);
+      await this.themeService.progress(true);
       this.attendanceService
         .get(dateString, this.user.Uid)
         .pipe(
@@ -53,7 +53,8 @@ export class AttendancePage implements OnInit {
             await this.themeService.progress(false);
             this.data$.next({ err: true });
             return err;
-          })
+          }),
+          first()
         )
         .subscribe(async (res: Attendance[]) => {
           console.log(res);
@@ -74,7 +75,6 @@ export class AttendancePage implements OnInit {
   ngOnDestroy(): void {
     this.isAlive = false;
   }
-  checkAttendance(student: User) {}
 
   async markAttendance(student: User) {
     if(this.user.Role!==UserRole.Teacher) return ;
@@ -89,6 +89,7 @@ export class AttendancePage implements OnInit {
           Teacher: { Uid: user.Uid, FullName: user.FullName }
         };
         await this.attendanceService.markAttendance(attendance);
+        await this.initDatas();
       } else {
         this.themeService.alert("Marked", "Already Marked");
       }
