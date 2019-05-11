@@ -1,4 +1,4 @@
-import { NgModule } from "@angular/core";
+import { NgModule, APP_INITIALIZER } from "@angular/core";
 import { BrowserModule } from "@angular/platform-browser";
 import { RouteReuseStrategy } from "@angular/router";
 
@@ -21,6 +21,7 @@ import { environment } from "../environments/environment";
 import { LocationModalComponent } from './shared/components/location/location-modal.component';
 import { SharedModule } from './shared/shared.module';
 import { NgxMapModule } from 'ngx-map';
+import { UserService } from './shared/services/user.service';
 
 @NgModule({
   declarations: [AppComponent],
@@ -40,7 +41,17 @@ import { NgxMapModule } from 'ngx-map';
     HttpClientModule,
     SharedModule
   ],
-  providers: [StatusBar, SplashScreen, { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }],
+  providers: [StatusBar,
+     SplashScreen,
+      { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
+      {
+        provide: APP_INITIALIZER,
+        deps: [UserService],
+        useFactory: (config: UserService) => {
+          return () => config.refreshUserDetails();
+        },
+        multi: true
+      }],
   bootstrap: [AppComponent]
 })
 export class AppModule {}

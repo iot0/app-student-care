@@ -12,43 +12,24 @@ export class AuthGuard implements CanActivate, CanLoad {
     next: ActivatedRouteSnapshot,
     state: RouterStateSnapshot
   ): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
-    let isLoggedIn = false;
-    if (this.user.isAuthenticated()) isLoggedIn = true;
-    // navigate to login page
-
-    if (isLoggedIn) {
-      if (state.url === "/login") {
-        this.router.navigate(["/home"]);
-        return false;
-      }
-      return true;
-    } else {
-      if (state.url === "/login") {
-        return true;
-      } else {
-        this.router.navigate(["/login"]);
-        return false;
-      }
-    }
+    return this.checkUser(state.url);
   }
   canLoad(route: Route, segments: UrlSegment[]): Observable<boolean> | Promise<boolean> | boolean {
-    let isLoggedIn = false;
-    if (this.user.isAuthenticated()) isLoggedIn = true;
-    // navigate to login page
+    return this.checkUser(route.path);
+  }
 
+  checkUser(path) {
+    let isLoggedIn = this.user.isAuthenticated();
+
+    // navigate to login page
     if (isLoggedIn) {
-      if (route.path.includes("login")) {
+      if (path.includes("login")) {
         this.router.navigate(["/home"]);
         return false;
       }
       return true;
-    } else {
-      if (route.path.includes("login")) {
-        return true;
-      } else {
-        this.router.navigate(["/login"]);
-        return false;
-      }
-    }
+    } else if (path.includes("login") || path.includes("welcome")) return true;
+    this.router.navigate(["/welcome"]);
+    return false;
   }
 }

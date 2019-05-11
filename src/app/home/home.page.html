@@ -3,7 +3,6 @@
       <ion-title>
           <ng-container *ngIf="(userService.isSchool$ | async)">School </ng-container>
           <ng-container *ngIf="(userService.isTeacher$ | async)">Teacher </ng-container>
-          <ng-container *ngIf="(userService.isStudent$ | async)">Student </ng-container>
           <ng-container *ngIf="(userService.isParent$ | async)">Parent </ng-container>
           Dashboard
         </ion-title>
@@ -33,13 +32,20 @@
         Child
       </div>
     </ion-card>
-    <ion-card class="col-item" *ngIf='userService.isTeacher$|async'  [routerLink]="['/attendance']">
+    <ion-card class="col-item" *ngIf='(userService.isTeacher$|async) || (userService.isParent$|async)'  [routerLink]="['/attendance']">
       <!-- <ion-icon name="infinite" color='secondary'></ion-icon> -->
       <img src="/assets/attendance.png" alt="">
       <div class="col-label">
         Attendence
       </div>
     </ion-card>
+    <ion-card class="col-item" *ngIf="(userService.isParent$ | async)" (click)="openNotifications()">
+        <!-- <ion-icon name="infinite" color='secondary'></ion-icon> -->
+        <img src="/assets/alert.png" alt="" />
+        <div class="col-label">
+          Notifications
+        </div>
+      </ion-card>
     <!---->
     <ion-card class="col-item" (click)="onLogOut()">
       <ion-icon name="log-out" color='danger'></ion-icon>

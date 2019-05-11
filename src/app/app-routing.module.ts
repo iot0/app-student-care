@@ -8,7 +8,6 @@ const routes: Routes = [
   { path: "login", loadChildren: "./login/login.module#LoginPageModule", canActivate: [AuthGuard], canLoad: [AuthGuard] },
   { path: "register", loadChildren: "./register/register.module#RegisterPageModule" },
   { path: "welcome", loadChildren: "./welcome/welcome.module#WelcomePageModule" },
-  { path: 'rule', loadChildren: './rule/rule.module#RulePageModule' },
   { path: 'exam', loadChildren: './exam/exam.module#ExamPageModule' },
   { path: 'students', loadChildren: './students/students.module#StudentsPageModule' },
   { path: 'teachers', loadChildren: './teachers/teachers.module#TeachersPageModule' },
@@ -16,7 +15,7 @@ const routes: Routes = [
   { path: 'student/:id', loadChildren: './student/student.module#StudentPageModule' },
   { path: "teacher", redirectTo: "teacher/" },
   { path: 'teacher/:id', loadChildren: './teacher/teacher.module#TeacherPageModule' },
-  { path: 'attendance', loadChildren: './attendance/attendance.module#AttendancePageModule' }
+  { path: 'attendance', loadChildren: './attendance/attendance.module#AttendancePageModule', canActivate: [AuthGuard], canLoad: [AuthGuard]  }
 ];
 
 @NgModule({

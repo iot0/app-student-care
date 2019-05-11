@@ -38,11 +38,7 @@ export class UserService {
   );
 
   userCollection: AngularFirestoreCollection<User>;
-  constructor(private router: Router, private firestoreService: FirestoreService, public afAuth: AngularFireAuth) {
-    const user = window.localStorage[this.localKey];
-    if (user) {
-      this.userSubject.next(JSON.parse(user));
-    }
+  constructor(private firestoreService: FirestoreService, public afAuth: AngularFireAuth) {
   }
 
   isAuthenticated(): boolean {
@@ -60,6 +56,33 @@ export class UserService {
     this.firestoreService.set(`${this.collectionName}/${res.user.uid}`, user);
     return user;
   }
+
+  async refreshUserDetails() {
+    const userString = window.localStorage[this.localKey];
+    if (userString != null && userString != "" && userString != "undefined") {
+      try {
+        let user = JSON.parse(userString);
+        if (user && user.Uid) {
+          user = await this.getUserDetailsAsAsync(user.Uid);
+          window.localStorage[this.localKey] = JSON.stringify(user);
+          this.userSubject.next(user);
+          return true;
+        }
+      } catch (err) {
+        this.clearUserJwt();
+        return false;
+      }
+    }
+    this.clearUserJwt();
+    return false;
+  }
+
+  
+  clearUserJwt() {
+    this.userSubject.next(null);
+    window.localStorage.removeItem(this.localKey);
+  }
+
   async login(user: User) {
     const res = await this.afAuth.auth.signInWithEmailAndPassword(user.EmailId, user.Password);
     user.Uid = res.user.uid;
@@ -94,11 +117,9 @@ export class UserService {
   }
 
   async logOut() {
-    await this.afAuth.auth.signOut();
-    this.router.navigate(["/welcome"]).then(() => {
-      this.userSubject.next(null);
-      window.localStorage.removeItem(this.localKey);
-    });
+    const user = window.localStorage[this.localKey];
+    if (user != null) await this.afAuth.auth.signOut();
+    this.clearUserJwt();
   }
 
   getById(docId: string) {

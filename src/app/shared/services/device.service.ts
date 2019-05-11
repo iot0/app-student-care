@@ -19,4 +19,8 @@ export class DeviceService {
       share()
     )
   }
+
+  send(data,ip){
+    return this.http.post(`http://${ip}/updateEventAlert`,data);
+  }
 }

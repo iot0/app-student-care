@@ -19,6 +19,9 @@ export class User {
 
   IsTeacherWatching?: boolean;
   IsParentWatching?: boolean;
+  IsAttendanceMarked?:boolean;
+
+  DeviceIp?:string;
 }
 export enum UserRole {
   School = 1,

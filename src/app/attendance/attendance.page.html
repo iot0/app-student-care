@@ -14,34 +14,67 @@
       </ion-label>
     </ion-item-divider>
     <ion-item>
-      <ion-datetime formControlName="date" display-format="MMM DD, YYYY" placeholder="Select Date"></ion-datetime>
+      <ion-datetime formControlName="date" display-format="MMM DD" placeholder="Select Date"></ion-datetime>
     </ion-item>
     <ion-button expand="full" (click)="initDatas()">Load</ion-button>
   </form>
+
   <ng-container *ngIf="(data$ | async) as res">
-    <ng-container *ngIf="res.data; else notificationTemplate">
-      <div class="position-relative">
-        <ion-list lines="inset">
-          <ion-card *ngFor="let data of res.data">
-            <!-- <ion-item [routerLink]="['/student/', data.Uid]" [ribbon]="false" ribbonContent="Presant" detail> -->
-            <ion-item [ribbon]="checkAttendance(data)" ribbonContent="Presant" (click)="markAttendance(data)">
-              <ion-avatar slot="start">
-                <img src="/assets/student.png" />
-              </ion-avatar>
-              <ion-label text-wrap>
-                <ion-text color="primary">
-                  <h3>{{ data.FullName }}</h3>
-                </ion-text>
-                <p>Class : {{ data.Class }}</p>
-              </ion-label>
-            </ion-item>
-            <!-- <ion-fab-button slot="end" color="secondary" (click)='markAttendance(data)'>
-              <ion-icon name="compass"></ion-icon>
-            </ion-fab-button> -->
-          </ion-card>
-        </ion-list>
-      </div>
+    <ng-container *ngIf="(userService.isTeacher$ | async); else parentTemplate">
+      <!--Teacher area-->
+      <ng-container *ngIf="res.data; else notificationTemplate">
+        <div class="position-relative">
+          <ion-list lines="inset">
+            <ion-card *ngFor="let data of res.data">
+              <!-- <ion-item [routerLink]="['/student/', data.Uid]" [ribbon]="false" ribbonContent="Presant" detail> -->
+              <ion-item
+                ribbon="true"
+                [ribbonColor]="data.IsAttendanceMarked ? 'success' : 'danger'"
+                [ribbonContent]="data.IsAttendanceMarked ? 'Present' : 'Absent'"
+                (click)="markAttendance(data)"
+              >
+                <ion-avatar slot="start">
+                  <img src="/assets/student.png" />
+                </ion-avatar>
+                <ion-label text-wrap>
+                  <ion-text color="primary">
+                    <h3>{{ data.FullName }}</h3>
+                  </ion-text>
+                  <p>Class : {{ data.Class }}</p>
+                </ion-label>
+              </ion-item>
+              <!-- <ion-fab-button slot="end" color="secondary" (click)='markAttendance(data)'>
+                    <ion-icon name="compass"></ion-icon>
+                  </ion-fab-button> -->
+            </ion-card>
+          </ion-list>
+        </div>
+      </ng-container>
     </ng-container>
+    <!--Parent area-->
+    <ng-template #parentTemplate>
+      <ng-container *ngIf="res.data; else parentNotification">
+        <ion-card>
+          <img src="/assets/present.png" alt="" />
+          <ion-card-content class="item-center">
+            Your child is presant in this Date.
+          </ion-card-content>
+        </ion-card>
+      </ng-container>
+      <ng-template #parentNotification>
+        <ng-container *ngIf="res.error || res.empty; else loadingTemplate">
+          <div class="item-center" [hidden]="!res.error">
+            Something went wrong , Try again later .
+          </div>
+          <ion-card [hidden]="!res.empty">
+            <img src="/assets/absent.png" alt="" />
+            <ion-card-content class="item-center">
+              Your child is absent in this Date.
+            </ion-card-content>
+          </ion-card>
+        </ng-container>
+      </ng-template>
+    </ng-template>
     <ng-template #notificationTemplate>
       <ng-container *ngIf="res.error || res.empty; else loadingTemplate">
         <div class="item-center" [hidden]="!res.error">
@@ -51,11 +84,11 @@
           List is empty.
         </div>
       </ng-container>
-      <ng-template #loadingTemplate>
-        <div class="item-center">
-          <ion-spinner name="lines"></ion-spinner>
-        </div>
-      </ng-template>
     </ng-template>
   </ng-container>
 </ion-content>
+<ng-template #loadingTemplate>
+  <div class="item-center">
+    <ion-spinner name="lines"></ion-spinner>
+  </div>
+</ng-template>
