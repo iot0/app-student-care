@@ -6,12 +6,12 @@ export const environment = {
   production: false,
   googleMapApiKey:"AIzaSyBzIro2tf6IiKET8mLqJg2K6US79UcMzSg",
   firebase:{
-    apiKey: "AIzaSyALiqEeKI-3JNDUC05vyc0j7yVJRhncaU0",
-    authDomain: "app-student-care.firebaseapp.com",
-    databaseURL: "https://app-student-care.firebaseio.com",
-    projectId: "app-student-care",
-    storageBucket: "app-student-care.appspot.com",
-    messagingSenderId: "86108963059"
+    apiKey: "AIzaSyCozEW7RrAm5RRVvGK8JrQXQ20XtDXe5b8",
+    authDomain: "student-care-fb29b.firebaseapp.com",
+    databaseURL: "https://student-care-fb29b.firebaseio.com",
+    projectId: "student-care-fb29b",
+    storageBucket: "student-care-fb29b.appspot.com",
+    messagingSenderId: "533637351693"
   }
 };
 
